@@ -96,9 +96,20 @@ figcaption{font-size:.9rem;color:#555}
   <figure><img src="screenshots/run1.png" alt="Run 1 email and Zap History"><figcaption>Run 1 — <span class="todo">[date/slot, PSI, matches haze.gov.sg?]</span></figcaption></figure>
   <figure><img src="screenshots/run2.png" alt="Run 2"><figcaption>Run 2 — <span class="todo">[…]</span></figcaption></figure>
   <figure><img src="screenshots/run3.png" alt="Run 3"><figcaption>Run 3 — <span class="todo">[…]</span></figcaption></figure>
-  <figure><img src="screenshots/tricky.png" alt="Tricky case"><figcaption><b>Tricky case.</b> Expected beforehand: if a region reading is missing or the API is down, the run should not send a nonsense value (NaN / -Infinity) — it should skip the missing region or error visibly. Result: <span class="todo">[…]</span></figcaption></figure>
+  <figure><img src="screenshots/tricky.png" alt="Tricky case result"><figcaption><b>Tricky case result</b> — see the table below.</figcaption></figure>
   <figure><img src="screenshots/fix.png" alt="Fix and rerun"><figcaption><b>Fix + rerun.</b> <span class="todo">[e.g. filtered to the five numeric regions / added v1 fallback; reran the tricky case: result]</span></figcaption></figure>
 </div>
+
+<h3>Tricky case: the main NEA feed goes down</h3>
+<table>
+<tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Case meant to break it</td><td>NEA's main PSI feed (data.gov.sg v2) is unavailable. Simulated in a <em>duplicate</em> Zap by changing the URL to <code>…/real-time/api/psi-broken</code>, so the live Zap is untouched.</td></tr>
+<tr><td>Expected beforehand<br><small>written 19 Oct 2026, 15:30 SGT, before running</small></td><td>The email will still work with no issues. data.gov.sg is a reliable, transparent government source, and my code falls back to NEA's older v1 feed when v2 fails, so the run should succeed and every number (national PSI, five regions, PM2.5, band) should match haze.gov.sg, with no blanks, <code>n/a</code> or NaN.</td></tr>
+<tr><td>What would prove me wrong</td><td>The run errors in Zap History, or the email arrives with blank, <code>n/a</code> or wrong values.</td></tr>
+<tr><td>What actually happened</td><td><span class="todo">[result + screenshot]</span></td></tr>
+<tr><td>Expectation met?</td><td><span class="todo">[yes / no, and why]</span></td></tr>
+<tr><td>Fix and rerun</td><td><span class="todo">[fix applied, then the tricky case rerun: result]</span></td></tr>
+</table>
 
 <h2>Collaboration log</h2>
 <table>
