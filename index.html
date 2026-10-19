@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSI Agent · PS5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2541;--teal:#0b5560;--red:#c8102e;--purple:#5b3a8c;--blue:#2a7a8c;--bg:#fff;--soft:#f2f6f9;--line:#d6e2ea;--gold:#fdf8e6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 "Source Sans 3",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 64px}
+h1,h2,h3{font-family:"Playfair Display",serif;line-height:1.2}
+h1{font-size:2.2rem;margin:.2em 0}
+h2{color:var(--teal);margin-top:2em;border-bottom:2px solid var(--line);padding-bottom:.3em}
+.sub{color:#555}
+.card{background:var(--soft);border-left:6px solid var(--teal);border-radius:8px;padding:16px 20px}
+.card dt{font-weight:700}.card dd{margin:0 0 8px}
+.grid{display:grid;grid-template-columns:1fr 1.6fr 1.6fr;gap:12px;margin:16px 0}
+.colh{background:var(--ink);color:#fff;font-weight:700;text-align:center;padding:12px;border-radius:8px}
+.rowh{background:#eef2f8;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;border-radius:8px}
+.q{position:relative;border:2px solid var(--line);border-radius:10px;padding:18px;text-align:center;background:var(--soft);cursor:pointer}
+.q.alongside{background:#f8f4fb;border-color:#d9c8e8}
+.q h3{margin:.3em 0;color:var(--purple);font-size:1.25rem}
+.q p{margin:0;font-size:.95rem}
+.q.sel{border:4px solid var(--red);background:#fff}
+.pin{display:none;position:absolute;top:-12px;right:-8px;background:var(--red);color:#fff;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:99px}
+.q.mine .pin{display:block}
+#pick{color:var(--teal);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);color:var(--teal)}
+tr.mine td{background:#fdecef}
+.q1{background:#fffdfb;border-left:6px solid var(--red);border-radius:8px;padding:8px 24px}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.shots figure{margin:0;border:1px solid var(--line);border-radius:8px;padding:8px}
+.shots img{width:100%;display:block;min-height:120px;background:var(--soft)}
+figcaption{font-size:.9rem;color:#555}
+.todo{background:var(--gold);padding:2px 6px;border-radius:4px}
+@media (max-width:700px){.grid{grid-template-columns:1fr 1fr}.grid .blank,.rowh{display:none}.colh{font-size:.85rem}.q{grid-column:span 1}}
+</style>
+</head>
+<body>
+<main>
+<p class="sub">Problem Set 5 · Sanesh Tiwari</p>
+<h1>6-hourly Singapore PSI email agent</h1>
+<p>A Zapier agent that fetches NEA's 24-hour PSI readings (the data behind haze.gov.sg) and emails me a summary four times a day.</p>
+
+<h2>Agent card</h2>
+<dl class="card">
+  <p style="margin:0 0 10px;font-weight:700">My agent card | Sanesh Tiwari | finished 19 October 2026, 15:00 SGT</p>
+  <dt>1. The job</dt><dd>Fetches NEA's latest 24-hour PSI for Singapore (national figure, five regions, PM2.5, health band and NEA advice) and emails it every 6 hours, for me in the role of a student commuting and exercising outdoors who needs to decide whether to limit outdoor activity.</dd>
+  <dt>2. The trigger</dt><dd>Code by Zapier (Run JavaScript) polls NEA's PSI feed on data.gov.sg and starts a run once per new 6-hour slot: 00:00, 06:00, 12:00 and 18:00 SGT.</dd>
+  <dt>3. The tools</dt><dd>Code by Zapier: Run JavaScript (read-only GET request to data.gov.sg; computes the highest regional PSI and NEA band). Gmail: Send Email (one plain-text email). No other apps or actions.</dd>
+  <dt>4. It must never</dt><dd>Email anyone other than me. The Gmail step's To field is typed in as my own address, not mapped from data, and the Zap has no other send or share actions.</dd>
+  <dt>5. Where a person checks</dt><dd>I read each email when it arrives (about 00:00, 06:00, 12:00 and 18:00) and spot-check it against haze.gov.sg. Once a day I review Zap History for errored or halted runs.</dd>
+</dl>
+
+<h2>Our two-by-two map</h2>
+<p>Tap a quadrant to try it. My agent is pinned in <strong>AI alone, with checks</strong>.</p>
+<div class="grid" id="map">
+  <div class="blank"></div>
+  <div class="colh">Work with a right answer</div>
+  <div class="colh">Work with no single right answer</div>
+
+  <div class="rowh">Work that people and AI must do together</div>
+  <div class="q" data-q="A person leads, AI inside" data-pos="top left"><span class="pin">My agent</span><h3>A person leads, AI inside</h3><p>The person leads and AI works inside.</p></div>
+  <div class="q" data-q="Agents run it, a person judges" data-pos="top right"><span class="pin">My agent</span><h3>Agents run it, a person judges</h3><p>Agents run the process and a person judges inside it.</p></div>
+
+  <div class="rowh">Work that either of them can do alone</div>
+  <div class="q mine sel" data-q="AI alone, with checks" data-pos="bottom left"><span class="pin">My agent</span><h3>AI alone, with checks</h3><p>AI does it, with spot checks.</p></div>
+  <div class="q alongside" data-q="A person decides, AI alongside" data-pos="bottom right"><span class="pin">My agent</span><h3>A person decides, AI alongside</h3><p>A person decides with AI alongside.</p></div>
+</div>
+<p id="pick">You picked AI alone, with checks (bottom left) — where my PSI agent sits.</p>
+
+<h3>What each quadrant means for the person in the loop</h3>
+<table>
+<tr><th>Quadrant</th><th>Right answer?</th><th>Together or alone?</th><th>The person in the loop</th></tr>
+<tr><td><b>A person leads, AI inside</b><br>top left</td><td>A right answer</td><td>Must do it together</td><td>Person leads; signs off what AI checked.</td></tr>
+<tr><td><b>Agents run it, a person judges</b><br>top right</td><td>No single right answer</td><td>Must do it together</td><td>Agents run it; person judges at judgement points.</td></tr>
+<tr class="mine"><td><b>AI alone, with checks</b> ← my agent<br>bottom left</td><td>A right answer</td><td>Either can do it alone</td><td>AI does it; a person reads its report or audits its log.</td></tr>
+<tr><td><b>A person decides, AI alongside</b><br>bottom right</td><td>No single right answer</td><td>Either can do it alone</td><td>Person decides; AI drafts options and checks facts.</td></tr>
+</table>
+
+<h2>Q1 · Where my agent sits and what it means</h2>
+<div class="q1">
+<p><b>(a) Quadrant.</b> <em>AI alone, with checks</em> (bottom left).</p>
+<p><b>(b) The two questions.</b> <em>Work with a right answer:</em> the PSI is a measured number published by NEA. In my runs the email's figures either matched haze.gov.sg and Zap History exactly or they didn't — e.g. run 1 showed national PSI <span class="todo">[value]</span>, identical to NEA's <span class="todo">[time]</span> reading. The health band is a fixed lookup (0–50 Good, 51–100 Moderate, …), so there is no judgement involved. <em>Work that either can do alone:</em> I could check haze.gov.sg myself; the agent just does it on a timer. None of my runs needed my input to complete — every run in Zap History ran start-to-finish without me.</p>
+<p><b>(c) The person in the loop.</b> I stay at the gate as an <em>auditor</em>, not an approver: I spot-check emails against haze.gov.sg and review Zap History for errors or halts. The agent may fetch, compute the max region, label the band and email me — alone. It may not decide anything for me. It would move to <em>A person decides, AI alongside</em> if it started recommending actions (e.g. "cancel your outdoor event") where there's no single right answer, and to <em>A person leads, AI inside</em> if it emailed other people (e.g. a school sending haze notices) — then a person must sign off before it goes out.</p>
+<p><b>(d) My group's view.</b> <span class="todo">[Fill in: where your group placed its agents in class, whether you agree, and which of the two questions you'd answer differently and why.]</span></p>
+</div>
+
+<h2>Runs, tricky case and fix</h2>
+<p>Email addresses are cropped from all screenshots.</p>
+<div class="shots">
+  <figure><img src="screenshots/run1.png" alt="Run 1 email and Zap History"><figcaption>Run 1 — <span class="todo">[date/slot, PSI, matches haze.gov.sg?]</span></figcaption></figure>
+  <figure><img src="screenshots/run2.png" alt="Run 2"><figcaption>Run 2 — <span class="todo">[…]</span></figcaption></figure>
+  <figure><img src="screenshots/run3.png" alt="Run 3"><figcaption>Run 3 — <span class="todo">[…]</span></figcaption></figure>
+  <figure><img src="screenshots/tricky.png" alt="Tricky case"><figcaption><b>Tricky case.</b> Expected beforehand: if a region reading is missing or the API is down, the run should not send a nonsense value (NaN / -Infinity) — it should skip the missing region or error visibly. Result: <span class="todo">[…]</span></figcaption></figure>
+  <figure><img src="screenshots/fix.png" alt="Fix and rerun"><figcaption><b>Fix + rerun.</b> <span class="todo">[e.g. filtered to the five numeric regions / added v1 fallback; reran the tricky case: result]</span></figcaption></figure>
+</div>
+
+<h2>Collaboration log</h2>
+<table>
+<tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Delegated to AI</td><td>Claude drafted the Zapier trigger code, the email template and this page's layout.</td></tr>
+<tr><td>What I checked and how</td><td>Ran the trigger test and compared every field with the raw data.gov.sg JSON and haze.gov.sg; checked PSI band cut-offs against NEA's published bands; opened the page in a private window.</td></tr>
+<tr><td>One AI error I caught</td><td><span class="todo">[e.g. the AI first assumed Zapier's free plan allowed Webhooks GET (it's premium) / mislabelled the band boundary / used the wrong JSON path]</span></td></tr>
+<tr><td>Time</td><td><span class="todo">[~x hours]</span></td></tr>
+<tr><td>Cost</td><td>S$0 — Zapier free plan, Vercel Hobby, no card added. ~4 tasks/day ≈ 120/month, within the free limit.</td></tr>
+</table>
+
+<h2>Reflection</h2>
+<p>The agent fitted the job well because PSI is an objective number with fixed health bands, so a timer plus a lookup does it reliably with only spot checks from me. It failed <span class="todo">[where: e.g. the 15-minute polling meant emails arrived up to 15 min after the slot, and one run errored when the API was slow]</span>. I would change it to only email when the band changes or PSI crosses 100, so the alerts carry signal instead of four routine emails a day.</p>
+</main>
+<script>
+const qs=document.querySelectorAll('.q'),pick=document.getElementById('pick');
+qs.forEach(q=>q.addEventListener('click',()=>{
+  qs.forEach(x=>x.classList.remove('sel'));q.classList.add('sel');
+  pick.textContent=`You picked ${q.dataset.q} (${q.dataset.pos}).`+(q.classList.contains('mine')?' — where my PSI agent sits.':' My agent is still pinned in AI alone, with checks.');
+}));
+</script>
+</body>
+</html>
