@@ -96,7 +96,8 @@ figcaption{font-size:.9rem;color:#555}
   <figure><img src="screenshots/run1.png" alt="Run 1 email and Zap History"><figcaption>Run 1 — <span class="todo">[date/slot, PSI, matches haze.gov.sg?]</span></figcaption></figure>
   <figure><img src="screenshots/run2.png" alt="Run 2"><figcaption>Run 2 — <span class="todo">[…]</span></figcaption></figure>
   <figure><img src="screenshots/run3.png" alt="Run 3"><figcaption>Run 3 — <span class="todo">[…]</span></figcaption></figure>
-  <figure><img src="screenshots/tricky.png" alt="Tricky case result"><figcaption><b>Tricky case result</b> — see the table below.</figcaption></figure>
+  <figure><img src="screenshots/tricky-before.png" alt="Tricky case before the fix: full data, no source field"><figcaption><b>Tricky case, before the fix.</b> Main feed broken: correct numbers, but nothing shows the v1 fallback was used.</figcaption></figure>
+  <figure><img src="screenshots/tricky-after.png" alt="Tricky case rerun after the fix: source shows NEA v1 fallback"><figcaption><b>Tricky case rerun, after the fix.</b> Same numbers, and <code>source</code> now reads &ldquo;NEA v1 (FALLBACK &ndash; main feed failed)&rdquo;.</figcaption></figure>
   <figure><img src="screenshots/fix.png" alt="Fix and rerun"><figcaption><b>Fix + rerun.</b> <span class="todo">[e.g. filtered to the five numeric regions / added v1 fallback; reran the tricky case: result]</span></figcaption></figure>
 </div>
 
@@ -106,9 +107,9 @@ figcaption{font-size:.9rem;color:#555}
 <tr><td>Case meant to break it</td><td>NEA's main PSI feed (data.gov.sg v2) is unavailable. Simulated in a <em>duplicate</em> Zap by changing the URL to <code>…/real-time/api/psi-broken</code>, so the live Zap is untouched.</td></tr>
 <tr><td>Expected beforehand<br><small>written 19 Oct 2026, 15:30 SGT, before running</small></td><td>The email will still work with no issues. data.gov.sg is a reliable, transparent government source, and my code falls back to NEA's older v1 feed when v2 fails, so the run should succeed and every number (national PSI, five regions, PM2.5, band) should match haze.gov.sg, with no blanks, <code>n/a</code> or NaN.</td></tr>
 <tr><td>What would prove me wrong</td><td>The run errors in Zap History, or the email arrives with blank, <code>n/a</code> or wrong values.</td></tr>
-<tr><td>What actually happened</td><td><span class="todo">[result + screenshot]</span></td></tr>
-<tr><td>Expectation met?</td><td><span class="todo">[yes / no, and why]</span></td></tr>
-<tr><td>Fix and rerun</td><td><span class="todo">[fix applied, then the tricky case rerun: result]</span></td></tr>
+<tr><td>What actually happened</td><td>The broken v2 URL returned 404 Not Found. The code caught the error and fell back to NEA&rsquo;s v1 feed, and the run succeeded with complete data: PSI 115 (Unhealthy), North 86, South 89, East 94, West 115, Central 104, PM2.5 68, 5/5 regions, reading time 15:00 SGT. <b>But the fallback was silent</b>: nothing in the output showed the main feed had failed.</td></tr>
+<tr><td>Expectation met?</td><td>Yes for the numbers: no blanks, <code>n/a</code> or NaN. But the test showed something I had not expected: as the person checking, I could not tell the agent was running on a backup source.</td></tr>
+<tr><td>Fix and rerun</td><td><b>Fix:</b> added a <code>source</code> field set to &ldquo;NEA v2 (main feed)&rdquo; or &ldquo;NEA v1 (FALLBACK &ndash; main feed failed)&rdquo;, and shown in the email. <b>Rerun:</b> with the URL still broken, <code>source</code> read &ldquo;NEA v1 (FALLBACK &ndash; main feed failed)&rdquo; and the numbers were unchanged. The same fix, with the working URL, was then applied to the live Zap.</td></tr>
 </table>
 
 <h2>Collaboration log</h2>
